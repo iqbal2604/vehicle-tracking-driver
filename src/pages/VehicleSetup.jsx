@@ -49,12 +49,21 @@ const VehicleSetup = () => {
                     <h1 className="text-2xl font-bold text-white mb-2">Vehicle Setup</h1>
                     <p className="text-slate-400">Register your vehicle to start</p>
                 </div>
-                <button
-                    onClick={() => { logout(); navigate('/login'); }}
-                    className="p-2 bg-slate-800 text-slate-400 rounded-lg hover:bg-red-500 hover:text-white transition"
-                >
-                    <LogOut className="w-5 h-5" />
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => navigate('/vehicles')}
+                        className="px-4 py-2 bg-slate-800 text-slate-300 text-sm font-medium rounded-lg hover:bg-slate-700 transition flex items-center gap-2"
+                    >
+                        <Car className="w-4 h-4" />
+                        List Vehicle
+                    </button>
+                    <button
+                        onClick={() => { logout(); navigate('/login'); }}
+                        className="p-2 bg-slate-800 text-slate-400 rounded-lg hover:bg-red-500 hover:text-white transition"
+                    >
+                        <LogOut className="w-5 h-5" />
+                    </button>
+                </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">

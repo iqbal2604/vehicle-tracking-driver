@@ -8,10 +8,12 @@ import VehicleList from './pages/VehicleList';
 import Profile from './pages/Profile';
 import { useEffect, useState } from 'react';
 import { vehicleAPI } from './services/api';
+import { useAuth } from './context/AuthContext';
 
 function App() {
   const [hasVehicles, setHasVehicles] = useState(null);
-  const token = localStorage.getItem('token');
+  const { token } = useAuth();
+  const activeVehicleId = localStorage.getItem('vehicle_id');
 
   useEffect(() => {
     if (token) {
@@ -49,7 +51,7 @@ function App() {
             3. If no vehicles -> setup
         */}
         <Route path="/" element={
-          localStorage.getItem('vehicle_id')
+          activeVehicleId
             ? <Navigate to="/map" replace />
             : hasVehicles === null
               ? <div className="min-h-screen bg-gray-900" /> // Loading state
