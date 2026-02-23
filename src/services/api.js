@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://fluffy-winner-p9xqw9qg6w6c97w4-3000.app.github.dev/api';
+const API_BASE_URL = 'https://literate-rotary-phone-p9rxjj5rvj43r69q-3000.app.github.dev/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
