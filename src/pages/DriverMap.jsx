@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { locationAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Navigation, Power, AlertTriangle, LogOut } from 'lucide-react';
+import { Navigation, Power, AlertTriangle, LogOut, Bell } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -31,7 +31,9 @@ const DriverMap = () => {
     const [lastUpdated, setLastUpdated] = useState(null);
     const [tracking, setTracking] = useState(false);
     const [error, setError] = useState(null);
+    const [alert, setAlert] = useState(null);
     const vehicleId = localStorage.getItem('vehicle_id');
+    const socket = useRef(null);
     const watchId = useRef(null);
     const wakeLock = useRef(null);
     const navigate = useNavigate();
@@ -44,6 +46,35 @@ const DriverMap = () => {
     }, [vehicleId, navigate]);
 
     // Request Wake Lock
+    // WebSocket for Alerts
+    useEffect(() => {
+        if (tracking) {
+            const token = localStorage.getItem('token');
+            const wsUrl = `wss://literate-rotary-phone-p9rxjj5rvj43r69q-3000.app.github.dev/ws?token=${token}`;
+
+            socket.current = new WebSocket(wsUrl);
+
+            socket.current.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'GEOFENCE_ALERT') {
+                    setAlert(data.message);
+                    // Auto hide alert after 5 seconds
+                    setTimeout(() => setAlert(null), 5000);
+                }
+            };
+
+            socket.current.onerror = (err) => {
+                console.error('WebSocket Error:', err);
+            };
+
+            return () => {
+                if (socket.current) {
+                    socket.current.close();
+                }
+            };
+        }
+    }, [tracking]);
+
     const requestWakeLock = async () => {
         if ('wakeLock' in navigator) {
             try {
@@ -153,6 +184,13 @@ const DriverMap = () => {
 
             {/* Overlay Controls */}
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-slate-900 via-slate-900/90 to-transparent z-[1000]">
+                {alert && (
+                    <div className="mb-4 bg-amber-500 text-white p-4 rounded-xl flex items-center gap-3 shadow-2xl animate-bounce border-2 border-white/20">
+                        <Bell className="w-6 h-6 shrink-0 animate-ring" />
+                        <div className="font-bold text-sm tracking-wide">{alert}</div>
+                    </div>
+                )}
+
                 {error && (
                     <div className="mb-4 bg-red-500/90 text-white p-3 rounded-lg flex items-center gap-2 text-sm backdrop-blur-sm">
                         <AlertTriangle className="w-4 h-4 shrink-0" />
