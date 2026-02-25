@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
-import { locationAPI } from '../services/api';
+import { locationAPI, WS_URL } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Navigation, Power, AlertTriangle, LogOut, Bell } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
@@ -50,7 +50,7 @@ const DriverMap = () => {
     useEffect(() => {
         if (tracking) {
             const token = localStorage.getItem('token');
-            const wsUrl = `wss://literate-rotary-phone-p9rxjj5rvj43r69q-3000.app.github.dev/ws?token=${token}`;
+            const wsUrl = `${WS_URL}?token=${token}`;
 
             socket.current = new WebSocket(wsUrl);
 
@@ -135,7 +135,7 @@ const DriverMap = () => {
                 },
                 {
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 30000,
                     maximumAge: 0
                 }
             );
